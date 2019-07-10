@@ -9,16 +9,15 @@ function printReceipt(inputs) {
 
 //1h
 function getAllItems(inputs){
-    var barcode;
-    var count;
+    var barcode,count;
     var itemNames = inputs.reduce(function(allItemNames,name) {
-        const splitIndex = name.indexOf('-');
-        if(splitIndex < 0){
+        var arr = name.indexOf('-');
+        if(arr < 0){
             barcode = name;
             count = 1;
         }else{
-            barcode = name.substring(0,splitIndex);
-            count = Number(name.substring(splitIndex+1));
+            barcode = name.substring(0,arr);
+            count = Number(name.substring(arr+1));
         }
         if(!allItemNames[barcode]){
             allItemNames[barcode] = count;
@@ -27,13 +26,12 @@ function getAllItems(inputs){
         }
         return allItemNames;
     },{});
-
     return itemNames;
 }
 
 //1h
 function getBoughtItems(allItem){
-    var orderArr=[];
+    var boughtItems=[];
     var allOrderItems = loadAllItems(); 
     var allPromotion = loadPromotions()[0].barcodes;
     allOrderItems.map(item=>{
@@ -44,28 +42,31 @@ function getBoughtItems(allItem){
                 obj.item = item;
                 obj.number=count;
                 if(count >= 2){
-                    [obj.moneyAfterSale,obj.moneyBeforeSale] = [(item.price*count-(item.price)).toFixed(2),(item.price*count).toFixed(2)];
+                    obj.moneyAfterSale = (item.price*count-(item.price)).toFixed(2);
+                    obj.moneyBeforeSale = (item.price*count).toFixed(2);
                 }else{
-                    [obj.moneyAfterSale,obj.moneyBeforeSale] = [(item.price*count).toFixed(2),(item.price*count).toFixed(2)];
+                    obj.moneyAfterSale = (item.price*count).toFixed(2);
+                    obj.moneyBeforeSale = (item.price*count).toFixed(2);
                 }
-                orderArr.push(obj)
+                boughtItems.push(obj)
             }else{
                 obj.item = item;
                 obj.number=count;
-                [obj.moneyAfterSale,obj.moneyBeforeSale] = [(item.price*count).toFixed(2),(item.price*count).toFixed(2)];
-                orderArr.push(obj)
+                obj.moneyAfterSale = (item.price*count).toFixed(2);
+                obj.moneyBeforeSale = (item.price*count).toFixed(2);
+                boughtItems.push(obj)
             }
         }
     });
-    return orderArr;
+    return boughtItems;
 }
 
 //40min
-function getItemInfoAfterSale(orderArr){
+function getItemInfoAfterSale(boughtItems){
     var itemPrice = ``; 
     var moneyAfterSale=0;
     var moneyBeforeSale = 0;
-    orderArr.forEach(element => {
+    boughtItems.forEach(element => {
         moneyAfterSale+=Number.parseFloat(element.moneyAfterSale);
         moneyBeforeSale+=Number.parseFloat(element.moneyBeforeSale);
         itemPrice+=`\n名称：${element.item.name}，数量：${element.number}${element.item.unit}，单价：${element.item.price.toFixed(2)}(元)，小计：${element.moneyAfterSale}(元)`;
