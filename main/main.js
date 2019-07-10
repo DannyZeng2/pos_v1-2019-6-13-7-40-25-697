@@ -2,27 +2,28 @@
 
 //1min
 function printReceipt(inputs) {
-    var orderArr=getBoughtItems(inputs);
-    console.log(getItemInfoAfterSale(orderArr));
+    var allItem=getAllItems(inputs);
+    var boughtItems=getBoughtItems(allItem);
+    console.log(getItemInfoAfterSale(boughtItems));
 }
 
 //1h
 function getAllItems(inputs){
-    var itemId;
-    var itemCount;
+    var barcode;
+    var count;
     var itemNames = inputs.reduce(function(allItemNames,name) {
         const splitIndex = name.indexOf('-');
         if(splitIndex < 0){
-            itemId = name;
-            itemCount = 1;
+            barcode = name;
+            count = 1;
         }else{
-            itemId = name.substring(0,splitIndex);
-            itemCount = Number(name.substring(splitIndex+1));
+            barcode = name.substring(0,splitIndex);
+            count = Number(name.substring(splitIndex+1));
         }
-        if(!allItemNames[itemId]){
-            allItemNames[itemId] = itemCount;
+        if(!allItemNames[barcode]){
+            allItemNames[barcode] = count;
         }else{
-        allItemNames[itemId]+=itemCount;
+        allItemNames[barcode]+=count;
         }
         return allItemNames;
     },{});
@@ -31,9 +32,8 @@ function getAllItems(inputs){
 }
 
 //1h
-function getBoughtItems(inputs){
+function getBoughtItems(allItem){
     var orderArr=[];
-    var allItem=getAllItems(inputs);
     var allOrderItems = loadAllItems(); 
     var allPromotion = loadPromotions()[0].barcodes;
     allOrderItems.map(item=>{
