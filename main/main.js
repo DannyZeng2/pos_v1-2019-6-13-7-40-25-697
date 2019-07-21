@@ -50,15 +50,21 @@ function getBoughtItems(allItem){
                 }
                 boughtItems.push(obj)
             }else{
-                obj.item = item;
-                obj.number=count;
-                obj.moneyAfterSale = (item.price*count).toFixed(2);
-                obj.moneyBeforeSale = (item.price*count).toFixed(2);
-                boughtItems.push(obj)
+                boughtItems = getItemsNoSale(boughtItems,item,count)
             }
         }
     });
     return boughtItems;
+}
+
+function getItemsNoSale(boughtItems,item,count){
+    var obj = {};
+    obj.item = item;
+    obj.number=count;
+    obj.moneyAfterSale = (item.price*count).toFixed(2);
+    obj.moneyBeforeSale = (item.price*count).toFixed(2);
+    boughtItems.push(obj);
+    return boughtItems; 
 }
 
 //40min
